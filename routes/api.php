@@ -22,7 +22,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Protected Routes
 Route::group(['middleware'=>['auth:sanctum']], function(){
-    Route::resource('students', UserController::class);
+    // Route::resource('students', UserController::class);
     Route::get('/payments', [StudentController::class, 'payments']);
     Route::patch('/payments/{id}/mark-paid', [StudentController::class, 'mark_paid']);
     Route::get('/payments/{id}/receipt', [StudentController::class, 'print_receipt']);
