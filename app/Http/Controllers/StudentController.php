@@ -10,41 +10,59 @@ use Illuminate\Support\Facades\Auth;
 class StudentController extends Controller
 {
     //View payments for School Fees
-    public function payments(Request $req)
+    public function payments()
     {
-        $user = $req->user()->id;
-        $payments = StudentFee::where('user_id', $user);
-
-        return "This is the payments page";
+        //Return all payments made by the current user
+        return response()->json(Auth::user()->payments);
     }
 
     // Pay for School Fees
     public function pay(Request $req){
+        //Get the class that the user is in to return the due fees
         $class = StudentClasses::where('class', $req->user()->class)->first();
 
-        if(!$class) return response("We couldn't find the student's class you are looking for!", 404);
-
+        if(!$class) return response()->json("Oops sorry, we couldn't determine your current class!", 404);
+        //Ceeate a payment transaction
         $payment = StudentFee::create([
-            'user_id'=>Auth::user()->id,
-            'current_class'=>Auth::user()->class,
+            'user_id'=>$req->user()->id,
+            'current_class'=>$req->user()->class,
             'fees_due' =>   $class->fees
         ]);
 
         return response([
             'message'=>'Invoice Generated Successfully!',
             'invoice'=>$payment
-        ], 201);
+        ], 201);        
     }
 
     // Manual method to mark an invoice as paid
-    public function mark_paid(Request $req, StudentFee $fee){
+    public function mark_paid(StudentFee $fee){
+        //Forbids a user that is not the current user from marking an invoice as paid
+        if(Auth::user()->id !== $fee->user_id) return response()->json("You cannot perform this action!", 403);
+        //Mark the Invoice as "paid"
+        $fee->status = "paid";
+        $fee->save();
+
+        return response()->json([
+            'message'=>'Fee paid successfully!',
+            'data'=>$fee
+        ]);
 
     }
 
     //Print receipt
-    public function  print_receipt(Request $req, StudentFee $fee)
+    public function  print_receipt(StudentFee $fee)
     {
-
+        // Repetition LOL but atleast it works!
+        //Forbids a user that is not the current user from printing a receipt.
+        if(Auth::user()->id !== $fee->user_id) return response()->json("You cannot perform this action!", 403);
+        
+        return response()->json([
+            'name' => $fee->user->firstname." ". $fee->user->lastname,
+            'amount' => $fee->fees_due,
+            'status' => $fee->status,
+            'date' => $fee->timestamp
+        ]);
     }
 
 

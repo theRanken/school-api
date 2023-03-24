@@ -13,4 +13,8 @@ class StudentClasses extends Model
         'class',
         'fees'
     ];
+
+    public function fees(){
+        return $this->fees;
+    }
 }

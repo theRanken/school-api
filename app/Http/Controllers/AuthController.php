@@ -64,7 +64,7 @@ class AuthController extends Controller
     }
 
     public function logout(Request $req){
-        Auth::user()->currentAccessToken()->delete();
+        $req->user()->currentAccessToken()->delete();
         return response("You have logged out!", 200);
     }
 }

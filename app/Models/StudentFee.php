@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class StudentFee extends Model
 {
     use HasFactory;
-    protected $fillable = ['current_class'];
+    protected $fillable = ['user_id', 'current_class', 'fees_due'];
 
     public function user()
     {

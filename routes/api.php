@@ -23,9 +23,9 @@ Route::post('/login', [AuthController::class, 'login']);
 // Protected Routes
 Route::group(['middleware'=>['auth:sanctum']], function(){
     Route::resource('students', UserController::class);
-    Route::get('/students/payments', [StudentController::class, 'payments']);
-    Route::get('/students/payments/{id}/mark-paid', [StudentController::class, 'mark_paid']);
-    Route::get('/students/payments/{id}/receipt', [StudentController::class, 'print_receipt']);
-    Route::post('/students/{student}/pay', [StudentController::class, 'pay']);
+    Route::get('/payments', [StudentController::class, 'payments']);
+    Route::patch('/payments/{id}/mark-paid', [StudentController::class, 'mark_paid']);
+    Route::get('/payments/{id}/receipt', [StudentController::class, 'print_receipt']);
+    Route::post('/payments/pay', [StudentController::class, 'pay']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });

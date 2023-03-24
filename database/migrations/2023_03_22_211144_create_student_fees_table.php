@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('current_class');
             $table->decimal('fees_due', $total = 8, $places = 2, $unsigned=true);
-            $table->char('status', 10);
+            $table->char('status', 10)->default("unpaid");
             $table->timestamps();
         });
     }
