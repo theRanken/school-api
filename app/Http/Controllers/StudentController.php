@@ -36,7 +36,10 @@ class StudentController extends Controller
     }
 
     // Manual method to mark an invoice as paid
-    public function mark_paid(StudentFee $fee){
+    public function mark_paid($id){
+
+        $fee = StudentFee::where('id', $id)->first();
+
         //Forbids a user that is not the current user from marking an invoice as paid
         if(Auth::user()->id !== $fee->user_id) return response()->json("You cannot perform this action!", 403);
         //Mark the Invoice as "paid"
@@ -51,18 +54,21 @@ class StudentController extends Controller
     }
 
     //Print receipt
-    public function  print_receipt(StudentFee $fee)
+    public function  print_receipt($id)
     {
         // Repetition LOL but atleast it works!
-        //Forbids a user that is not the current user from printing a receipt.
+        // Forbids a user that is not the current user from printing a receipt.
+        $fee = StudentFee::where('id', $id)->first();
+
         if(Auth::user()->id !== $fee->user_id) return response()->json("You cannot perform this action!", 403);
-        
+
         return response()->json([
             'name' => $fee->user->firstname." ". $fee->user->lastname,
             'amount' => $fee->fees_due,
             'status' => $fee->status,
-            'date' => $fee->timestamp
+            'date' => $fee->created_at
         ]);
+        return (string)$fee;
     }
 
 
