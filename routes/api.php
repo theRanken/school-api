@@ -27,5 +27,6 @@ Route::group(['middleware'=>['auth:sanctum']], function(){
     Route::patch('/payments/{id}/mark-paid', [StudentController::class, 'mark_paid']);
     Route::get('/payments/{id}/receipt', [StudentController::class, 'print_receipt']);
     Route::post('/payments/pay', [StudentController::class, 'pay']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::any('/logout', [AuthController::class, 'logout']);
+    Route::any('/logout-all', [AuthController::class, 'logoutAllSessions']);
 });
