@@ -25,10 +25,15 @@ Route::group(['middleware'=>['auth:sanctum']], function(){
     // Route::resource('students', UserController::class);
 
     // Transaction Endpoints
-    Route::get('/payments', [StudentController::class, 'payments']);
-    Route::patch('/payments/{id}/mark-paid', [StudentController::class, 'mark_paid']);
-    Route::get('/payments/{id}/receipt', [StudentController::class, 'print_receipt']);
-    Route::post('/payments/pay', [StudentController::class, 'pay']);
+    Route::prefix('payments')
+        ->controller(StudentController::class)
+        ->group(function(){
+        Route::get('', 'payments');
+        Route::patch('mark-paid/{id}','mark_paid');
+        Route::get('receipt/{id}', 'print_receipt');
+        Route::post('pay', 'pay');
+    });
+    
 
     // Logut Endpoints
     Route::any('/logout', [AuthController::class, 'logout']);

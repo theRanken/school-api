@@ -60,6 +60,7 @@ class StudentController extends Controller
         // Forbids a user that is not the current user from printing a receipt.
         $fee = StudentFee::where('id', $id)->first();
 
+        if(!$fee) return response()->json("You Have No Receipts!", 404);
         if(Auth::user()->id !== $fee->user_id) return response()->json("You cannot perform this action!", 403);
 
         return response()->json([
