@@ -68,7 +68,6 @@ class StudentController extends Controller
             'status' => $fee->status,
             'date' => $fee->created_at
         ]);
-        return (string)$fee;
     }
 
 

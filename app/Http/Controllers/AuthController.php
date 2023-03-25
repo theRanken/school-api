@@ -67,8 +67,9 @@ class AuthController extends Controller
         $req->user()->currentAccessToken()->delete();
         return response("You have logged out!", 200);
     }
+    
     //Revoke all tokens on all devices previously logged in
-    public function logoutAllSessions(Request $req){
+    public function logout_all_sessions(Request $req){
         $req->user()->tokens()->delete();
         return response("You have logged out!", 200);
     }

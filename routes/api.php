@@ -23,10 +23,14 @@ Route::post('/login', [AuthController::class, 'login']);
 // Protected Routes
 Route::group(['middleware'=>['auth:sanctum']], function(){
     // Route::resource('students', UserController::class);
+
+    // Transaction Endpoints
     Route::get('/payments', [StudentController::class, 'payments']);
     Route::patch('/payments/{id}/mark-paid', [StudentController::class, 'mark_paid']);
     Route::get('/payments/{id}/receipt', [StudentController::class, 'print_receipt']);
     Route::post('/payments/pay', [StudentController::class, 'pay']);
+
+    // Logut Endpoints
     Route::any('/logout', [AuthController::class, 'logout']);
-    Route::any('/logout-all', [AuthController::class, 'logoutAllSessions']);
+    Route::any('/logout-all', [AuthController::class, 'logout_all_sessions']);
 });
