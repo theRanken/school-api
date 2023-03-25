@@ -29,7 +29,7 @@ class StudentController extends Controller
             'fees_due' =>   $class->fees
         ]);
 
-        return response([
+        return response()->json([
             'message'=>'Invoice Generated Successfully!',
             'invoice'=>$payment
         ], 201);        
