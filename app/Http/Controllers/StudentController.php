@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InvoiceMail;
 use Illuminate\Http\Request;
 use App\Models\StudentFee;
 use App\Models\StudentClasses;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class StudentController extends Controller
 {
@@ -29,6 +31,8 @@ class StudentController extends Controller
             'fees_due' =>   $class->fees
         ]);
 
+        Mail::to($payment->user->email)->send(new InvoiceMail($payment));
+        
         return response()->json([
             'message'=>'Invoice Generated Successfully!',
             'invoice'=>$payment
@@ -45,6 +49,10 @@ class StudentController extends Controller
         //Mark the Invoice as "paid"
         $fee->status = "paid";
         $fee->save();
+
+
+        // Send Generated receipt
+        // Mail::to($fee->user->email)->send(new InvoiceMail($fee));
 
         return response()->json([
             'message'=>'Fee paid successfully!',

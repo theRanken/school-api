@@ -1,6 +1,8 @@
 <?php
 
+use App\Mail\InvoiceMail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('/invoice-mail', [MailController::class, 'invoice']);
