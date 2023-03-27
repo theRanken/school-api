@@ -5,8 +5,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -16,8 +17,9 @@ class AuthController extends Controller
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'email' => 'required|string|unique:users,email',
+            'file' => 'image|nullable',
             'class' => 'required|string',
-            'password' => 'required|string|confirmed',
+            'password' => 'required|string',
 
         ]);
 
@@ -29,12 +31,22 @@ class AuthController extends Controller
             'password' => Hash::make($fields['password'])
         ]);
 
-        $token = $user->createToken($user->email.'-Token')->plainTextToken;
+        if($req->hasFile('file')){
+            $file = $req->file('file');
+            $filename = $file->store('public/profile-pictures');
+            $full_file_url = Storage::url($filename);
+
+            //had to build a path which contains port 
+            $base_url = Config::get('app.url').(env('APP_PORT')?":".env('APP_PORT'):"");
+
+            $user->profile->passport = $base_url.$full_file_url;
+            $user->profile->save();
+        }
+
 
         $res = [
             'message'=>'User has been created successfully!',
-            'user' => $user,
-            'token' => $token
+            'user' => $user
         ];
 
         return response($res, 201);
@@ -54,9 +66,12 @@ class AuthController extends Controller
         $user = User::where('email', $req->email)->first();
 
         $res = [
-            'message'=>'User has logged in succesfully!',
-            'user' => $user,
-            'token' => $user->createToken($user->email.'-Token')->plainTextToken
+            'message'=>"Logged in as ".$user->email." !",
+            'data' => [
+                'token' => $user->createToken($user->email.'-Token')->plainTextToken,
+                'user' => $user,
+                'profile' => $user->profile
+            ]
         ];
 
         return response($res, 201);

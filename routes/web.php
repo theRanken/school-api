@@ -14,4 +14,10 @@ use App\Http\Controllers\MailController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/invoice-mail', [MailController::class, 'invoice']);
+
+Route::prefix('mail')->controller(MailController::class)->group(function(){
+    Route::get('invoice-mail', 'invoice');
+    Route::get('receipt-mail', 'receipt');
+});
+
+

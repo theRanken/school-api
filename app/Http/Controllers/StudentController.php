@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\InvoiceMail;
+use App\Mail\ReceiptMail;
 use Illuminate\Http\Request;
 use App\Models\StudentFee;
 use App\Models\StudentClasses;
@@ -52,7 +53,7 @@ class StudentController extends Controller
 
 
         // Send Generated receipt
-        // Mail::to($fee->user->email)->send(new InvoiceMail($fee));
+        Mail::to($fee->user->email)->send(new ReceiptMail($fee));
 
         return response()->json([
             'message'=>'Fee paid successfully!',
