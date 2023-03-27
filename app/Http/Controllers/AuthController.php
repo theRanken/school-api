@@ -37,6 +37,8 @@ class AuthController extends Controller
             $full_file_url = Storage::url($filename);
 
             //had to build a path which contains port 
+            //You have to add "APP_PORT" in your .env file
+            //for this to work as expected
             $base_url = Config::get('app.url').(env('APP_PORT')?":".env('APP_PORT'):"");
 
             $user->profile->passport = $base_url.$full_file_url;
