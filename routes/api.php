@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 
@@ -20,6 +21,17 @@ use App\Http\Controllers\UserController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+
+// Student's Routes 
+Route::prefix('students')
+    ->controller(StudentController::class)
+    ->group(function(){
+
+    Route::post('notify-all', 'notify');
+
+});
+
+
 // Protected Routes
 Route::group(['middleware'=>['auth:sanctum']], function(){
     // Route::resource('students', UserController::class);
@@ -32,8 +44,7 @@ Route::group(['middleware'=>['auth:sanctum']], function(){
         Route::patch('mark-paid/{id}','mark_paid');
         Route::get('receipt/{id}', 'print_receipt');
         Route::post('pay', 'pay');
-    });
-    
+    });    
 
     // Logut Endpoints
     Route::any('/logout', [AuthController::class, 'logout']);

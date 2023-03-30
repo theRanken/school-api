@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Mail\InvoiceMail;
 use App\Mail\ReceiptMail;
 use App\Models\StudentFee;
-use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
@@ -21,4 +20,6 @@ class MailController extends Controller
         $mail = new ReceiptMail($receipt);
         return  $mail;
     }
+
+    
 }

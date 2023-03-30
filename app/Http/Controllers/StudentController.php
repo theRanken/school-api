@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Mail\InvoiceMail;
 use App\Mail\ReceiptMail;
+use App\Mail\NotificationMail;
 use Illuminate\Http\Request;
 use App\Models\StudentFee;
 use App\Models\StudentClasses;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+use Exception;
 
 class StudentController extends Controller
 {
@@ -77,6 +80,48 @@ class StudentController extends Controller
             'amount' => $fee->fees_due,
             'status' => $fee->status,
             'date' => $fee->created_at
+        ]);
+    }
+
+    public function notify(Request $req){
+        $req->validate([
+            'subject' => 'string|required',
+            'body' => 'string|required'
+        ]);
+
+        $users = User::all('firstname', 'lastname', 'email');
+
+        // Counters for Successes and failures
+        $mailed_count = 0;
+        $failed_count = 0;
+
+        // get each user and send a mail to that user
+        foreach($users as $user){
+            // try sending the mail
+            try{
+                Mail::to($user->email)
+                    ->send(
+                        new NotificationMail(
+                            $user->firstname.' '.$user->lastname,
+                            $req->subject, 
+                            $req->body
+                        )
+                    );
+                // update $mailed_count count on success
+                $mailed_count++;
+            }
+            // catch any errors
+            catch(Exception $e){
+                // update $failed_count in the event of a failure
+                $failed_count++;
+            }
+        }
+
+        $message = "Successfully Notified $mailed_count students";
+        if($failed_count) $message.=",\n meanwhile $failed_count could not be contacted";
+
+        return response()->json([
+            'message' => $message
         ]);
     }
 
