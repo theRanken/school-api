@@ -15,12 +15,9 @@ class NotificationMail extends Mailable
 
     /**
      * Create a new message instance.
+     * @var array<string,ObjectClass>
      */
-    public function __construct(
-        protected string $name, 
-        protected string $heading, 
-        protected string $contents
-    ){}
+    public function __construct(protected $data){}
 
     /**
      * Get the message envelope.
@@ -40,9 +37,9 @@ class NotificationMail extends Mailable
         return new Content(
             markdown: 'mail.notification',
             with:[
-                'user' => $this->name,
-                'subject' => $this->heading,
-                'body' => $this->contents
+                'user' => $this->data['name'],
+                'subject' => $this->data['heading'],
+                'body' => $this->data['content']
             ]
         );
     }

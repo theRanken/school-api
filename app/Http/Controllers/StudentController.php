@@ -11,7 +11,11 @@ use App\Models\StudentClasses;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use App\Notifications\StudentNotification;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class StudentController extends Controller
 {
@@ -91,38 +95,25 @@ class StudentController extends Controller
 
         $users = User::all('firstname', 'lastname', 'email');
 
-        // Counters for Successes and failures
-        $mailed_count = 0;
-        $failed_count = 0;
 
-        // get each user and send a mail to that user
-        foreach($users as $user){
-            // try sending the mail
-            try{
-                Mail::to($user->email)
-                    ->send(
-                        new NotificationMail(
-                            $user->firstname.' '.$user->lastname,
-                            $req->subject, 
-                            $req->body
-                        )
-                    );
-                // update $mailed_count count on success
-                $mailed_count++;
-            }
-            // catch any errors
-            catch(Exception $e){
-                // update $failed_count in the event of a failure
-                $failed_count++;
-            }
+        // instantiate a logger
+         $logger = new ConsoleOutput();
+
+        // Send Email wih request data
+        try{
+
+            echo Notification::send($users, new StudentNotification($req->subject, $req->body)); 
+
+            return response()->json([
+                'message' => "Emails Dispatched Successfully!"
+            ]);
+        }catch(Exception $e){
+        //    log errors to console
+            $logger->writeln("Error: ".$e->getMessage()." in ".$e->getFile()." on Line: :".$e->getLine());
+            return response()->json([
+                'message' => "Emails failed to dispatch!"
+            ], 500);
         }
-
-        $message = "Successfully Notified $mailed_count students";
-        if($failed_count) $message.=",\n meanwhile $failed_count could not be contacted";
-
-        return response()->json([
-            'message' => $message
-        ]);
     }
 
 
